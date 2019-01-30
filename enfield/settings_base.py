@@ -33,6 +33,7 @@ MIDDLEWARE = (
 
 SITE_ID = 1
 AUTH_USER_MODEL = 'employee.User'
+ROOT_URLCONF = "enfield.urls"
 
 TEMPLATES = [
     {

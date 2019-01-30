@@ -23,7 +23,7 @@ class Employee(models.Model):
     location = models.ForeignKey(verbose_name="Location", to=Location, on_delete=DO_NOTHING)
     user = models.ForeignKey(verbose_name="User", to=User, null=True, blank=True, on_delete=DO_NOTHING)
     last_name = models.CharField(verbose_name="Last Name", max_length=30)
-    first_name = models.CharField(verbose_name="Last Name", max_length=30)
+    first_name = models.CharField(verbose_name="First Name", max_length=30)
     start_date = models.DateField(verbose_name="Start Date", null=True, blank=True)
     rate = models.DecimalField(verbose_name="Rate", max_digits=4, decimal_places=3, default=1.0)
     is_active = models.BooleanField(verbose_name="Currently Employed", default=True)
