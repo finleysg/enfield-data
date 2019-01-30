@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Django stuff:
+logs/
+*.log
+*.pot
+var/
+enfield/settings_production.py
+enfield/settings_development.py
+enfield/wsgi.py
+
+# Intellij
+.idea/
+enfield-data.iml
+
+db-backup.sh
+*.sql
