@@ -14,6 +14,9 @@ INSTALLED_APPS = (
     "django.contrib.sites",
     "corsheaders",
     "simple_history",
+    "account",
+    "employee",
+    "invoice"
 )
 
 MIDDLEWARE = (
@@ -29,6 +32,7 @@ MIDDLEWARE = (
 )
 
 SITE_ID = 1
+AUTH_USER_MODEL = 'employee.User'
 
 TEMPLATES = [
     {
