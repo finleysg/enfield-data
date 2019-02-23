@@ -1,38 +1,30 @@
 from django.contrib import admin
-from .models import AccountType, Account, ContactType, Contact
+from .models import AccountType, Account, Contact
 
 
-class ContactInline(admin.StackedInline):
+class ContactInline(admin.TabularInline):
     model = Contact
     verbose_name_plural = "contacts"
-    fields = ["contact_type", "last_name", "first_name", "email", "primary_phone", "alternative_phone",
-              "fax", "do_notify", "notes", ]
+    fields = ["last_name", "first_name", "email", "primary_phone", "do_notify", ]
     can_delete = True
     extra = 0
 
 
 class AccountTypeAdmin(admin.ModelAdmin):
     model = AccountType
-    fields = ["name", ]
-    list_display = ["name", ]
-    list_display_links = ["name", ]
-
-
-class ContactTypeAdmin(admin.ModelAdmin):
-    model = ContactType
-    fields = ["name", ]
-    list_display = ["name", ]
-    list_display_links = ["name", ]
+    fields = ["description", "tax_rate", "is_active", ]
+    list_display = ["description", "tax_rate", "is_active", ]
+    list_display_links = ["description", ]
 
 
 class ContactAdmin(admin.ModelAdmin):
     model = Contact
     save_on_top = True
-    fields = ["contact_type", "last_name", "first_name", "email", "primary_phone", "alternative_phone",
+    fields = ["last_name", "first_name", "email", "primary_phone", "alternate_phone",
               "fax", "do_notify", "notes", ]
-    list_display = ["name", "email", "primary_phone", "contact_type", ]
+    list_display = ["name", "email", "primary_phone", ]
     list_display_links = ("name", )
-    list_filter = ("contact_type", "do_notify", )
+    search_fields = ["last_name", "first_name", "email", ]
 
 
 class AccountAdmin(admin.ModelAdmin):
@@ -43,9 +35,9 @@ class AccountAdmin(admin.ModelAdmin):
     list_display_links = ("account_number", "name", )
     list_filter = ("account_type", )
     inlines = [ContactInline, ]
+    search_fields = ["name", ]
 
 
 admin.site.register(AccountType, AccountTypeAdmin)
-admin.site.register(ContactType, ContactTypeAdmin)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Contact, ContactAdmin)

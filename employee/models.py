@@ -20,7 +20,7 @@ class Location(models.Model):
 
 
 class Employee(models.Model):
-    location = models.ForeignKey(verbose_name="Location", to=Location, on_delete=DO_NOTHING)
+    location = models.ForeignKey(verbose_name="Location", to=Location, null=True, blank=True, on_delete=DO_NOTHING)
     user = models.ForeignKey(verbose_name="User", to=User, null=True, blank=True, on_delete=DO_NOTHING)
     last_name = models.CharField(verbose_name="Last Name", max_length=30)
     first_name = models.CharField(verbose_name="First Name", max_length=30)

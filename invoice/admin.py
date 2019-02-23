@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import LaborType, InvoiceType, ServiceType, AccountTypeLabor, AccountTypeServices, Invoice, Labor, Service
+from .models import LaborType, InvoiceType, ServiceType, AccountTypeLabor, AccountTypeServices, Invoice, Labor, Service, \
+    VehicleLog
 
 
 class LaborInline(admin.TabularInline):
@@ -39,20 +40,20 @@ class ServiceTypeAdmin(admin.ModelAdmin):
     list_display_links = ["name", ]
 
 
-class AccountTypeLaborAdmin(admin.ModelAdmin):
+class AccountTypeLaborInline(admin.TabularInline):
     model = AccountTypeLabor
-    save_on_top = True
-    fields = ["account_type", "labor_type", "rate", "estimated_time", "is_active", ]
-    list_display = ["account_type", "labor_type", "rate", "estimated_time", "is_active", ]
-    list_display_links = ("account_type", "labor_type", )
-    list_filter = ("account_type", "labor_type", "is_active", )
+    verbose_name_plural = "labor types"
+    fields = ["labor_type", "rate", "rate_type", ]
+    can_delete = True
+    extra = 0
 
 
 class AccountTypeServicesAdmin(admin.ModelAdmin):
     model = AccountTypeServices
     save_on_top = True
-    fields = ["account_type", "service_type", "rate", "estimated_time", "is_active", ]
-    list_display = ["account_type", "service_type", "rate", "estimated_time", "is_active", ]
+    fields = ["account_type", "service_type", "rate", "is_active", ]
+    inlines = [AccountTypeLaborInline, ]
+    list_display = ["account_type", "service_type", "rate", "is_active", ]
     list_display_links = ("account_type", "service_type", )
     list_filter = ("account_type", "service_type", "is_active", )
 
@@ -74,15 +75,27 @@ class InvoiceAdmin(admin.ModelAdmin):
             "fields":  ("po_number", "is_complete", "is_paid", "tax_rate", ),
         }),
     )
-    list_display = ["invoice_number", "location", "account", "receive_date", "vehicle", ]
+    list_display = ["invoice_number", "location", "account", "receive_date", "vehicle",
+                    "stock_number", "vin", "po_number", "is_paid", ]
+    list_editable = ["po_number", "is_paid", ]
     list_display_links = ("invoice_number", )
-    list_filter = ("location", "receive_date", "is_complete", "is_paid", )
+    list_filter = ("location", "receive_date", "account", "is_complete", "is_paid", )
     inlines = [ServiceInline, LaborInline, ]
+    search_fields = ["invoice_number", "vin", "stock_number", ]
+
+
+class VehicleLogAdmin(admin.ModelAdmin):
+    model = VehicleLog
+    readonly_fields = ["invoice", "stock_number", "note", "log_date", ]
+    list_display = ["invoice", "stock_number", "note", "log_date", ]
+    list_display_links = None
+    list_filter = ("log_date", )
+    search_fields = ["invoice__invoice_number", "stock_number", ]
 
 
 admin.site.register(LaborType, LaborTypeAdmin)
 admin.site.register(InvoiceType, InvoiceTypeAdmin)
 admin.site.register(ServiceType, ServiceTypeAdmin)
-admin.site.register(AccountTypeLabor, AccountTypeLaborAdmin)
 admin.site.register(AccountTypeServices, AccountTypeServicesAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
+admin.site.register(VehicleLog, VehicleLogAdmin)

@@ -45,38 +45,36 @@ class ServiceType(models.Model):
         ordering = ["name", ]
 
 
-class AccountTypeLabor(models.Model):
-    account_type = models.ForeignKey(verbose_name="Account Type", to=AccountType, on_delete=CASCADE)
-    labor_type = models.ForeignKey(verbose_name="Labor Type", to=LaborType, on_delete=CASCADE)
-    rate = models.DecimalField(verbose_name="Default Rate", max_digits=9, decimal_places=4)
-    estimated_time = models.IntegerField(verbose_name="Default Estimated Time")
-    is_active = models.BooleanField(verbose_name="Is Active", default=True)
-    history = HistoricalRecords()
-
-    def __str__(self):
-        return "{} {} Settings".format(self.account_type.name, self.labor_type.name)
-
-    class Meta:
-        verbose_name = 'Account Labor Settings'
-        verbose_name_plural = 'Account Labor Settings'
-        ordering = ["account_type__name", "labor_type__name", ]
-
-
 class AccountTypeServices(models.Model):
     account_type = models.ForeignKey(verbose_name="Account Type", to=AccountType, on_delete=CASCADE)
     service_type = models.ForeignKey(verbose_name="Service Type", to=ServiceType, on_delete=CASCADE)
-    rate = models.DecimalField(verbose_name="Default Rate", max_digits=12, decimal_places=4)
-    estimated_time = models.IntegerField(verbose_name="Default Estimated Time")
+    rate = models.DecimalField(verbose_name="Default Rate", max_digits=12, decimal_places=4, default=0)
+    estimated_time = models.IntegerField(verbose_name="Default Estimated Time", default=0)
     is_active = models.BooleanField(verbose_name="Is Active", default=True)
     history = HistoricalRecords()
 
     def __str__(self):
-        return "{} {} Settings".format(self.account_type.name, self.service_type.name)
+        return "{} {}".format(self.account_type.description, self.service_type.name)
 
     class Meta:
-        verbose_name = 'Account Service Settings'
-        verbose_name_plural = 'Account Service Settings'
+        verbose_name = 'Account-Service Mapping'
+        verbose_name_plural = 'Account-Service Mapping'
         ordering = ["account_type__name", "service_type__name", ]
+
+
+class AccountTypeLabor(models.Model):
+    account_type_service = models.ForeignKey(verbose_name="Service Type", to=AccountTypeServices, on_delete=CASCADE)
+    labor_type = models.ForeignKey(verbose_name="Labor Type", to=LaborType, on_delete=CASCADE)
+    rate = models.DecimalField(verbose_name="Default Rate", max_digits=9, decimal_places=4, default=0.0000)
+    rate_type = models.CharField(verbose_name="Default Rate Type", max_length=1, default="F")
+    history = HistoricalRecords()
+
+    def __str__(self):
+        return "{} {}".format(self.account_type_service.service_type.name, self.labor_type.name)
+
+    class Meta:
+        verbose_name = 'Service-Labor Mapping'
+        verbose_name_plural = 'Service-Labor Mapping'
 
 
 class Invoice(models.Model):
@@ -99,7 +97,7 @@ class Invoice(models.Model):
     history = HistoricalRecords()
 
     class Meta:
-        ordering = ["invoice_number", ]
+        ordering = ["-id", ]
 
     @property
     def vehicle(self):
@@ -113,8 +111,8 @@ class Labor(models.Model):
     invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=CASCADE)
     employee = models.ForeignKey(verbose_name="Employee", to=Employee, on_delete=DO_NOTHING)
     labor_type = models.ForeignKey(verbose_name="Labor Type", to=LaborType, on_delete=DO_NOTHING)
-    estimated_rate = models.DecimalField(verbose_name="Estimated Rate", max_digits=4, decimal_places=3)
-    actual_rate = models.DecimalField(verbose_name="Actual Rate", max_digits=4, decimal_places=3)
+    estimated_rate = models.DecimalField(verbose_name="Estimated Rate", max_digits=6, decimal_places=3)
+    actual_rate = models.DecimalField(verbose_name="Actual Rate", max_digits=6, decimal_places=3)
     estimated_time = models.IntegerField(verbose_name="Estimated Time")
     actual_time = models.IntegerField(verbose_name="Estimated Time")
     labor_date = models.DateField(verbose_name="Labor Date")
@@ -127,7 +125,6 @@ class Labor(models.Model):
     class Meta:
         verbose_name = 'Labor'
         verbose_name_plural = 'Labor'
-        ordering = ["labor_date", "invoice__invoice_number", "employee__name", ]
 
 
 class Service(models.Model):
@@ -144,4 +141,18 @@ class Service(models.Model):
     class Meta:
         verbose_name = 'Services'
         verbose_name_plural = 'Services'
-        ordering = ["service_date", "invoice__invoice_number", "service_type__name", ]
+
+
+class VehicleLog(models.Model):
+    invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=DO_NOTHING)
+    stock_number = models.CharField(verbose_name="Stock Number", max_length=20, db_index=True)
+    note = models.CharField(verbose_name="Note", max_length=160)
+    log_date = models.DateField(verbose_name="Log Date", auto_created=True)
+
+    def __str__(self):
+        return "{}: {} ({})".format(self.stock_number, self.invoice.invoice_number, self.log_date)
+
+    class Meta:
+        verbose_name = 'Vehicle Log'
+        verbose_name_plural = 'Vehicle Log'
+        ordering = ["-id", ]

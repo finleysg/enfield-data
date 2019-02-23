@@ -26,5 +26,6 @@ enfield/wsgi.py
 .idea/
 enfield-data.iml
 
+venv/
 db-backup.sh
 *.sql

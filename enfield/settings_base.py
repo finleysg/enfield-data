@@ -6,6 +6,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 INSTALLED_APPS = (
     "django.contrib.contenttypes",
+    "grappelli.dashboard",
+    "grappelli",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.sessions",
@@ -14,6 +16,7 @@ INSTALLED_APPS = (
     "django.contrib.sites",
     "corsheaders",
     "simple_history",
+    "report_builder",
     "account",
     "employee",
     "invoice"
@@ -56,6 +59,10 @@ TEMPLATES = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 WSGI_APPLICATION = "enfield.wsgi.application"
+
+GRAPPELLI_ADMIN_TITLE = "Enfields Detail Administration"
+GRAPPELLI_ADMIN_URL = "/admin/"
+GRAPPELLI_INDEX_DASHBOARD = "dashboard.CustomIndexDashboard"
 
 LANGUAGE_CODE = "en-us"
 

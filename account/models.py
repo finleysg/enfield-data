@@ -4,35 +4,24 @@ from simple_history.models import HistoricalRecords
 
 
 class AccountType(models.Model):
-    name = models.CharField(verbose_name="Name", max_length=30)
+    description = models.CharField(verbose_name="Description", max_length=30, default="")
+    tax_rate = models.DecimalField(verbose_name="Tax Rate", max_digits=5, decimal_places=4, default=0.0000)
+    is_active = models.BooleanField(verbose_name="Active", default=True)
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.name
+        return self.description
 
     class Meta:
         verbose_name = 'Account Type'
         verbose_name_plural = 'Account Types'
-        ordering = ["name", ]
-
-
-class ContactType(models.Model):
-    name = models.CharField(verbose_name="Name", max_length=30)
-    history = HistoricalRecords()
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Contact Type'
-        verbose_name_plural = 'Contact Types'
-        ordering = ["name", ]
+        ordering = ["description", ]
 
 
 class Account(models.Model):
     account_type = models.ForeignKey(verbose_name="Account Type", to=AccountType, on_delete=DO_NOTHING)
     account_number = models.CharField(verbose_name="Account Number", max_length=10, unique=True)
-    name = models.CharField(verbose_name="Name", max_length=30)
+    name = models.CharField(verbose_name="Name", max_length=50)
     address = models.CharField(verbose_name="Address", max_length=200, blank=True, null=True)
     city = models.CharField(verbose_name="City", max_length=40, blank=True, null=True)
     state = models.CharField(verbose_name="State", max_length=2, default="TN", blank=True, null=True)
@@ -48,11 +37,10 @@ class Account(models.Model):
         return ["name__icontains", "account_number__icontains", ]
 
     class Meta:
-        ordering = ["name", ]
+        ordering = ["account_type__description", "name", ]
 
 
 class Contact(models.Model):
-    contact_type = models.ForeignKey(verbose_name="Contact Type", to=ContactType, on_delete=DO_NOTHING)
     account = models.ForeignKey(verbose_name="Account", to=Account, on_delete=CASCADE)
     last_name = models.CharField(verbose_name="Last Name", max_length=30)
     first_name = models.CharField(verbose_name="Last Name", max_length=30)
