@@ -41,7 +41,7 @@ class Account(models.Model):
 
 
 class Contact(models.Model):
-    account = models.ForeignKey(verbose_name="Account", to=Account, on_delete=CASCADE)
+    account = models.ForeignKey(verbose_name="Account", to=Account, on_delete=CASCADE, related_name="contacts")
     last_name = models.CharField(verbose_name="Last Name", max_length=30)
     first_name = models.CharField(verbose_name="Last Name", max_length=30)
     email = models.CharField(verbose_name="Email", max_length=200, blank=True, null=True)

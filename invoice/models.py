@@ -98,6 +98,10 @@ class Invoice(models.Model):
 
     class Meta:
         ordering = ["-id", ]
+        indexes = [
+            Index(fields=["vin", ], name="ix_invoice_vin"),
+            Index(fields=["stock_number", ], name="ix_invoice_stock_number")
+        ]
 
     @property
     def vehicle(self):
@@ -108,7 +112,7 @@ class Invoice(models.Model):
 
 
 class Labor(models.Model):
-    invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=CASCADE)
+    invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=CASCADE, related_name="labor")
     employee = models.ForeignKey(verbose_name="Employee", to=Employee, on_delete=DO_NOTHING)
     labor_type = models.ForeignKey(verbose_name="Labor Type", to=LaborType, on_delete=DO_NOTHING)
     estimated_rate = models.DecimalField(verbose_name="Estimated Rate", max_digits=6, decimal_places=3)
@@ -128,7 +132,7 @@ class Labor(models.Model):
 
 
 class Service(models.Model):
-    invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=CASCADE)
+    invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=CASCADE, related_name="services")
     service_type = models.ForeignKey(verbose_name="Service Type", to=ServiceType, on_delete=DO_NOTHING)
     rate = models.DecimalField(verbose_name="Rate", max_digits=12, decimal_places=4)
     estimated_time = models.IntegerField(verbose_name="Estimated Time")
@@ -144,7 +148,7 @@ class Service(models.Model):
 
 
 class VehicleLog(models.Model):
-    invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=DO_NOTHING)
+    invoice = models.ForeignKey(verbose_name="Invoice", to=Invoice, on_delete=DO_NOTHING, related_name="history")
     stock_number = models.CharField(verbose_name="Stock Number", max_length=20, db_index=True)
     note = models.CharField(verbose_name="Note", max_length=160)
     log_date = models.DateField(verbose_name="Log Date", auto_created=True)

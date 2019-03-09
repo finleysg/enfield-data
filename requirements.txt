@@ -4,7 +4,10 @@ Django==2.1.5
 django-cors-headers==2.4.0
 django-report-builder==6.2.2
 django-grappelli==2.12.2
+django-rest-auth==0.9.3
 django-simple-history==2.7.0
 django-storages==1.7.1
+djangorestframework==3.9.1
 graphene-django==2.2.0
 mysqlclient==1.4.1
+requests==2.21.0
